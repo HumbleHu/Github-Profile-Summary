@@ -7,8 +7,6 @@ const auth = async (req, res, next) => {
 	const sql = `select * from user where id='${id}'`;
 	exec(sql).then((result) => {
 		next();
-		// 返回用户信息
-		res.send(result[0]);
 	});
 };
 

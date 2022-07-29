@@ -18,20 +18,30 @@ app.use(
 );
 
 app.post("/register", (req, res) => {
-	const username = req.body.username;
-	// 密码进行加密
-	const password = bcrypt.hashSync(req.body.password, 10);
-	const sql = `insert into user (username, password) values ('${username}', '${password}')`;
+	const username = req.query.username;
+	const password = req.query.password;
+	const sql = `select * from userInfo where username='${username}'`;
 	exec(sql).then((result) => {
-		return;
+		const user = result[0];
+		if (user) {
+			//用户名已经存在
+			res.send("用户名已经存在");
+		}
+		// 密码进行加密
+		const hashedPassword = bcrypt.hashSync(password, 10);
+		const sql = `insert into userInfo (username, password) values ('${username}', '${hashedPassword}')`;
+		exec(sql).then((result) => {
+			return;
+		});
+		res.send("用户注册成功");
 	});
-	res.send("用户注册成功");
 });
 
 app.post("/login", (req, res) => {
 	// 从请求中获取请求体
-	const { username, password } = req.body;
-	const sql = `select * from user where username='${username}'`;
+	const username = req.query.username;
+	const password = req.query.password;
+	const sql = `select * from userInfo where username='${username}'`;
 	exec(sql).then((result) => {
 		const user = result[0];
 		// 如果查询不到用户
