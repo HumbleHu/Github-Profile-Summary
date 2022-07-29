@@ -68,6 +68,8 @@ const customer = require("./routes/customer");
 const auth = require("./controllers/auth");
 app.use("/customer", auth, customer);
 
+app.use("/test", customer);
+
 app.listen(port, () => {
 	console.log("listening on:", port);
 });
