@@ -1,9 +1,9 @@
 //executing sql command
-const con = require("../routes/con");
+const conn = require("../routes/conn");
 
 const exec = (sql) => {
 	const promise = new Promise((resolve, reject) => {
-		con.query(sql, (err, result) => {
+		conn.query(sql, (err, result) => {
 			if (err) reject(err);
 			resolve(result);
 		});
