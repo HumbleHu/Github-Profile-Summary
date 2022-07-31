@@ -33,11 +33,11 @@ router.get("/guser/:guser/repos/stars", (req, res) => {
 			repos = result.data;
 			repos.forEach((repo) => {
 				// console.log(repo);
-				var repo_obj = new Object();
-				repo_obj.name = repo.name;
-				repo_obj.stars = repo.stargazers_count;
-				repo_obj.url = repo.html_url;
-				reposSortedByStar.push(repo_obj);
+				var repObject = new Object();
+				repObject.name = repo.name;
+				repObject.stars = repo.stargazers_count;
+				repObject.url = repo.html_url;
+				reposSortedByStar.push(repObject);
 			});
 			// console.log(res);
 			reposSortedByStar.sort(function (a, b) {

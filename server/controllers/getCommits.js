@@ -5,7 +5,7 @@ const Async = require("async");
 
 async function getCommit(repo, guser) {
 	return new Promise((resolve, reject) => {
-		var repo_obj = new Object();
+		var repObject = new Object();
 		var owner = repo.owner.login;
 		axios
 			.get(`${hostname}/repos/${owner}/${repo.name}/commits?author=${guser}`, {
@@ -14,11 +14,11 @@ async function getCommit(repo, guser) {
 				},
 			})
 			.then((commit) => {
-				repo_obj.name = repo.name;
-				repo_obj.commit = commit.data.length;
+				repObject.name = repo.name;
+				repObject.commit = commit.data.length;
 				// console.log(repo.name);
 				// console.log(commit.data.length);
-				resolve(repo_obj);
+				resolve(repObject);
 			})
 			.catch((err) => {
 				console.log(err);
