@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const token = require("../controllers/token");
+const getCommits = require("../controllers/getCommits");
 // guser => github_user
 
 const hostname = "https://api.github.com";
@@ -16,29 +18,59 @@ router.get("/guser/:guser/general", (req, res) => {
 		});
 });
 
-router.get("/guser/:guser/repos", (req, res) => {
+//stars per repo
+router.get("/guser/:guser/repos/stars", (req, res) => {
 	const { guser } = req.params;
 	var repos = [];
-	var res = [];
+	var reposSortedByStar = [];
 	axios
-		.get(`${hostname}/users/${guser}/repos`)
+		.get(`${hostname}/users/${guser}/repos`, {
+			headers: {
+				Authorization: "token " + token, //得要有这玩意才能一个小时访问5000+次
+			},
+		})
 		.then((result) => {
 			repos = result.data;
 			repos.forEach((repo) => {
 				var repo_obj = new Object();
 				repo_obj.name = repo.name;
 				repo_obj.stars = repo.stargazers_count;
-				res.push(repo_obj);
+				reposSortedByStar.push(repo_obj);
 			});
 			// console.log(res);
-			res.sort(function (a, b) {
-				return a.stars - b.stars;
+			reposSortedByStar.sort(function (a, b) {
+				return b.stars - a.stars;
 			});
-			console.log(res);
+			res.send(reposSortedByStar.slice(0, 10));
 		})
 		.catch((err) => {
 			console.log(err);
 		});
 });
 
+//commits per repo
+router.get("/guser/:guser/repos/commits", async (req, res) => {
+	const { guser } = req.params;
+	var repos = [];
+	var reposSortedByCommit = [];
+	axios
+		.get(`${hostname}/users/${guser}/repos`, {
+			headers: {
+				Authorization: "token " + token, //得要有这玩意才能一个小时访问5000+次
+			},
+		})
+		.then(async (result) => {
+			repos = result.data;
+			reposSortedByCommit = await getCommits(repos, guser);
+			// console.log("testing");
+			// console.log(reposSortedByCommit);
+			reposSortedByCommit.sort(function (a, b) {
+				return b.commit - a.commit;
+			});
+			res.send(reposSortedByCommit.slice(0, 10));
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+});
 module.exports = router;
