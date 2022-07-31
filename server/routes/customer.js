@@ -32,10 +32,12 @@ router.get("/guser/:guser/repos/stars", (req, res) => {
 		.then((result) => {
 			repos = result.data;
 			repos.forEach((repo) => {
-				var repo_obj = new Object();
-				repo_obj.name = repo.name;
-				repo_obj.stars = repo.stargazers_count;
-				reposSortedByStar.push(repo_obj);
+				// console.log(repo);
+				var repObject = new Object();
+				repObject.name = repo.name;
+				repObject.stars = repo.stargazers_count;
+				repObject.url = repo.html_url;
+				reposSortedByStar.push(repObject);
 			});
 			// console.log(res);
 			reposSortedByStar.sort(function (a, b) {
@@ -62,8 +64,6 @@ router.get("/guser/:guser/repos/commits", async (req, res) => {
 		.then(async (result) => {
 			repos = result.data;
 			reposSortedByCommit = await getCommits(repos, guser);
-			// console.log("testing");
-			// console.log(reposSortedByCommit);
 			reposSortedByCommit.sort(function (a, b) {
 				return b.commit - a.commit;
 			});
